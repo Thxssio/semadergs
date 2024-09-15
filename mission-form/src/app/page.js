@@ -343,6 +343,7 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
   );
 };
 
+
 // Componente principal
 export default function MissionForm() {
   const [city, setCity] = useState('');
@@ -362,6 +363,8 @@ export default function MissionForm() {
   const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  
 
   const handleInvalidInput = (event) => {
     if (event.target.name === "city") {
@@ -386,6 +389,20 @@ export default function MissionForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const toggleSection = (section) => {
+    if (section === 'international') {
+      if (showInternational) {
+        setSelectionType('');
+      }
+      setShowInternational(!showInternational);
+    } else if (section === 'national') {
+      if (showNational) {
+        setSelectionType('');
+      }
+      setShowNational(!showNational);
+    }
   };
 
   const handleSubmit = async (e) => {
