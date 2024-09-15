@@ -211,7 +211,13 @@ const InternationalSection = ({ handleBooleanChange }) => {
       <Input type="number" name="helpValueInternational" placeholder="Valor de Ajuda Mensal (R$)" required />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Input type="text" name="missionaryTimeInternational" placeholder="Quanto tempo de ajuda?" required />
+      <Select name="missionaryTimeInternational" required>
+        <option value="">Selecione o tempo de ajuda...</option>
+        <option value="1 ano">1 ano</option>
+        <option value="2 anos">2 anos</option>
+        <option value="3 anos">3 anos</option>
+        <option value="indeterminado">Indeterminado</option>
+      </Select>
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
       <Select name="missionarySentByChurch" onChange={handleBooleanChange} required>
@@ -239,7 +245,13 @@ const NationalSection = ({ handleBooleanChange }) => {
       <Input type="number" name="helpValueNational" placeholder="Valor de Ajuda Mensal (R$)" required />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Input type="text" name="missionaryTimeNational" placeholder="Quanto tempo de ajuda?" required />
+      <Select name="missionaryTimeNational" required>
+        <option value="">Selecione o tempo de ajuda...</option>
+        <option value="1 ano">1 ano</option>
+        <option value="2 anos">2 anos</option>
+        <option value="3 anos">3 anos</option>
+        <option value="indeterminado">Indeterminado</option>
+      </Select>
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
       <Select name="missionarySentByChurchNational" onChange={handleBooleanChange} required>
@@ -251,6 +263,7 @@ const NationalSection = ({ handleBooleanChange }) => {
   );
 };
 
+
 // Componente principal
 export default function MissionForm() {
   const [city, setCity] = useState('');
@@ -261,8 +274,8 @@ export default function MissionForm() {
   const [missionarySentByChurch, setMissionarySentByChurch] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
   const handleInvalidInput = (event) => {
-    // Mensagens de validação personalizadas para os campos
     if (event.target.name === "city") {
       event.target.setCustomValidity("Por favor, digite o nome da cidade.");
     } else if (event.target.name === "pastorName") {
@@ -275,6 +288,7 @@ export default function MissionForm() {
       event.target.setCustomValidity("");
     }
   };
+
   const handleBooleanChange = (e) => {
     setMissionarySentByChurch(e.target.value === "true");
   };
@@ -302,7 +316,6 @@ export default function MissionForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validação dos campos
     if (!city || !pastorName || (!showInternational && !showNational)) {
       setShowAlert(true);
       return;
