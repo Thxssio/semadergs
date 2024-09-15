@@ -64,6 +64,23 @@ const Input = styled.input`
   }
 `;
 
+const Select = styled.select`
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+  }
+`;
+
 const Button = styled.button`
   width: 100%;
   padding: 10px;
@@ -80,6 +97,83 @@ const Button = styled.button`
   }
 `;
 
+const Popup = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  z-index: 1000;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  opacity: 0;
+  animation: fadeIn 0.4s ease-in-out forwards;
+
+  h2 {
+    font-size: 24px;
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -45%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+`;
+
+const ButtonStyled = styled.button`
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  opacity: 0;
+  animation: fadeInOverlay 0.4s ease-in-out forwards;
+
+  @keyframes fadeInOverlay {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
 const RadioGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -91,146 +185,251 @@ const RadioLabel = styled.label`
   color: #333;
 `;
 
+const AlertBox = styled.div`
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+`;
+
 // Componentes refatorados para as seções
-const InternationalSection = ({ showInternational }) => {
-  if (!showInternational) return null;
+const InternationalSection = ({ handleBooleanChange }) => {
   return (
     <div>
+      <Label>País:</Label>
+      <Input type="text" name="countryInternational" placeholder="Digite o país..." required />
+
       <Label>Nome do Missionário:</Label>
-      <Input type="text" name="missionaryNameInternational" placeholder="Nome do Missionário" />
+      <Input type="text" name="missionaryNameInternational" placeholder="Nome do Missionário" required />
 
       <Label>Valor de Ajuda Mensal (R$):</Label>
-      <Input type="number" name="helpValueInternational" placeholder="Valor de Ajuda Mensal (R$)" />
+      <Input type="number" name="helpValueInternational" placeholder="Valor de Ajuda Mensal (R$)" required />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Input type="text" name="missionaryTimeInternational" placeholder="Selecione o tempo..." />
+      <Input type="text" name="missionaryTimeInternational" placeholder="Quanto tempo de ajuda?" required />
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
-      <Input type="text" name="missionarySentByChurch" placeholder="Selecione..." />
+      <Select name="missionarySentByChurch" onChange={handleBooleanChange} required>
+        <option value="">Selecione...</option>
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+      </Select>
     </div>
   );
 };
 
-const NationalSection = ({ showNational }) => {
-  if (!showNational) return null;
+const NationalSection = ({ handleBooleanChange }) => {
   return (
     <div>
       <Label>Estado:</Label>
-      <Input type="text" name="state" placeholder="Selecione o estado..." />
+      <Input type="text" name="state" placeholder="Digite o estado..." required />
 
       <Label>Município:</Label>
-      <Input type="text" name="municipality" placeholder="Selecione o município..." />
+      <Input type="text" name="municipality" placeholder="Digite o município..." required />
 
       <Label>Nome do Missionário:</Label>
-      <Input type="text" name="missionaryNameNational" placeholder="Nome do Missionário" />
+      <Input type="text" name="missionaryNameNational" placeholder="Nome do Missionário" required />
 
       <Label>Valor de Ajuda Mensal (R$):</Label>
-      <Input type="number" name="helpValueNational" placeholder="Valor de Ajuda Mensal (R$)" />
+      <Input type="number" name="helpValueNational" placeholder="Valor de Ajuda Mensal (R$)" required />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Input type="text" name="missionaryTimeNational" placeholder="Selecione o tempo..." />
+      <Input type="text" name="missionaryTimeNational" placeholder="Quanto tempo de ajuda?" required />
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
-      <Input type="text" name="missionarySentByChurchNational" placeholder="Selecione..." />
+      <Select name="missionarySentByChurchNational" onChange={handleBooleanChange} required>
+        <option value="">Selecione...</option>
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+      </Select>
     </div>
   );
 };
 
 // Componente principal
 export default function MissionForm() {
-  const [city, setCity] = useState('');  // Caixa de texto para a cidade
+  const [city, setCity] = useState('');
   const [pastorName, setPastorName] = useState('');
   const [selectionType, setSelectionType] = useState('');
   const [showInternational, setShowInternational] = useState(false);
   const [showNational, setShowNational] = useState(false);
-
-  const handleCityChange = (e) => {
-    setCity(e.target.value);
-    checkFields();
-  };
-
-  const handlePastorNameChange = (e) => {
-    setPastorName(e.target.value);
-    checkFields();
-  };
-
-  const checkFields = () => {
-    if (city && pastorName) {
-      setShowInternational(selectionType === 'international' || selectionType === 'both');
-      setShowNational(selectionType === 'national' || selectionType === 'both');
+  const [missionarySentByChurch, setMissionarySentByChurch] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const handleInvalidInput = (event) => {
+    // Mensagens de validação personalizadas para os campos
+    if (event.target.name === "city") {
+      event.target.setCustomValidity("Por favor, digite o nome da cidade.");
+    } else if (event.target.name === "pastorName") {
+      event.target.setCustomValidity("Por favor, digite o nome do pastor presidente.");
+    } else if (event.target.name === "missionaryNameInternational") {
+      event.target.setCustomValidity("Por favor, digite o nome do missionário.");
+    } else if (event.target.name === "helpValueInternational") {
+      event.target.setCustomValidity("Por favor, digite o valor de ajuda mensal.");
+    } else {
+      event.target.setCustomValidity("");
     }
+  };
+  const handleBooleanChange = (e) => {
+    setMissionarySentByChurch(e.target.value === "true");
+  };
+
+  const handleSelectionTypeChange = (type) => {
+    setSelectionType(type);
+    setShowInternational(type === 'international' || type === 'both');
+    setShowNational(type === 'national' || type === 'both');
+  };
+
+  const toggleSection = (section) => {
+    if (section === 'international') {
+      if (showInternational) {
+        setSelectionType('');
+      }
+      setShowInternational(!showInternational);
+    } else if (section === 'national') {
+      if (showNational) {
+        setSelectionType('');
+      }
+      setShowNational(!showNational);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validação dos campos
+    if (!city || !pastorName || (!showInternational && !showNational)) {
+      setShowAlert(true);
+      return;
+    }
+
+    setShowAlert(false);
+    setShowPopup(true); // Exibir o popup após enviar o formulário
+  };
+
+  const handleNewForm = () => {
+    setCity('');
+    setPastorName('');
+    setSelectionType('');
+    setShowInternational(false);
+    setShowNational(false);
+    setShowPopup(false); // Fechar o popup e resetar o formulário
   };
 
   return (
     <PageWrapper>
       <FormWrapper>
         <LogoWrapper>
-          <Image src="/SEMADERGS.png" alt="Logo SEMADERGS" width={180} height={50} />
+          <Image src="/SEMADERGS.png" alt="Logo SEMADERGS" width={180} height={60} />
         </LogoWrapper>
 
-        <Label>Campo (Cidade do RS):</Label>
-        <Input
-          type="text"
-          name="city"
-          placeholder="Digite o nome da cidade..."
-          value={city}
-          onChange={handleCityChange}
-        />
+        {showAlert && (
+          <AlertBox>Por favor, preencha todos os campos obrigatórios.</AlertBox>
+        )}
 
-        <Label>Nome do Pastor Presidente:</Label>
-        <Input
-          type="text"
-          name="pastorName"
-          placeholder="Nome do Pastor Presidente"
-          value={pastorName}
-          onChange={handlePastorNameChange}
-        />
+        <form onSubmit={handleSubmit}>
+          <Label>Campo (Cidade do RS):</Label>
+          <Input
+            type="text"
+            name="city"
+            placeholder="Digite o nome da cidade..."
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            onInvalid={handleInvalidInput}
+            required
+          />
 
-        <RadioGroup>
-          <RadioLabel>
-            <input
-              type="radio"
-              name="selectionType"
-              value="international"
-              checked={selectionType === 'international'}
-              onChange={() => setSelectionType('international')}
-            />{' '}
-            Internacional
-          </RadioLabel>
-          <RadioLabel>
-            <input
-              type="radio"
-              name="selectionType"
-              value="national"
-              checked={selectionType === 'national'}
-              onChange={() => setSelectionType('national')}
-            />{' '}
-            Nacional
-          </RadioLabel>
-          <RadioLabel>
-            <input
-              type="radio"
-              name="selectionType"
-              value="both"
-              checked={selectionType === 'both'}
-              onChange={() => setSelectionType('both')}
-            />{' '}
-            Ambos
-          </RadioLabel>
-        </RadioGroup>
+          <Label>Nome do Pastor Presidente:</Label>
+          <Input
+            type="text"
+            name="pastorName"
+            placeholder="Nome do Pastor Presidente"
+            value={pastorName}
+            onChange={(e) => setPastorName(e.target.value)}
+            onInvalid={handleInvalidInput}
+            required
+          />
 
-        <SectionTitle onClick={() => setShowInternational(!showInternational)}>
-          Detalhamento de Ajuda Missionária Internacional {showInternational ? '-' : '+'}
-        </SectionTitle>
-        <InternationalSection showInternational={showInternational} />
+          <RadioGroup>
+            <RadioLabel>
+              <input
+                type="radio"
+                name="selectionType"
+                value="international"
+                checked={selectionType === 'international'}
+                onChange={() => handleSelectionTypeChange('international')}
+                onInvalid={handleInvalidInput}
+                required
+              />{' '}
+              Internacional
+            </RadioLabel>
+            <RadioLabel>
+              <input
+                type="radio"
+                name="selectionType"
+                value="national"
+                checked={selectionType === 'national'}
+                onChange={() => handleSelectionTypeChange('national')}
+                onInvalid={handleInvalidInput}
+                required
+              />{' '}
+              Nacional
+            </RadioLabel>
+            <RadioLabel>
+              <input
+                type="radio"
+                name="selectionType"
+                value="both"
+                checked={selectionType === 'both'}
+                onChange={() => handleSelectionTypeChange('both')}
+                onInvalid={handleInvalidInput}
+                required
+              />{' '}
+              Ambos
+            </RadioLabel>
+          </RadioGroup>
 
-        <SectionTitle onClick={() => setShowNational(!showNational)}>
-          Detalhamento de Ajuda Missionária Nacional {showNational ? '-' : '+'}
-        </SectionTitle>
-        <NationalSection showNational={showNational} />
+          {selectionType && (
+            <>
+              {showInternational && (
+                <SectionTitle onClick={() => toggleSection('international')}>
+                  Detalhamento de Ajuda Missionária Internacional {showInternational ? '-' : '+'}
+                </SectionTitle>
+              )}
+              {showInternational && (
+                <InternationalSection handleBooleanChange={handleBooleanChange} />
+              )}
 
-        <Button type="submit">Enviar</Button>
+              {showNational && (
+                <SectionTitle onClick={() => toggleSection('national')}>
+                  Detalhamento de Ajuda Missionária Nacional {showNational ? '-' : '+'}
+                </SectionTitle>
+              )}
+              {showNational && (
+                <NationalSection handleBooleanChange={handleBooleanChange} />
+              )}
+            </>
+          )}
+
+          <Button type="submit">Enviar</Button>
+        </form>
       </FormWrapper>
+
+      {showPopup && (
+        <>
+          <Overlay />
+          <Popup>
+            <h2>Obrigado!</h2>
+            <p>Seu formulário foi enviado com sucesso.</p>
+            <ButtonStyled onClick={handleNewForm}>Preencher novo formulário</ButtonStyled>
+          </Popup>
+        </>
+      )}
     </PageWrapper>
   );
 }
