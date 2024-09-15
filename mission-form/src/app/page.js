@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { supabase } from './supabaseClient';  // Importar o cliente do Supabase
 
 // Estilização dos componentes
 const PageWrapper = styled.div`
@@ -9,7 +10,7 @@ const PageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('/background.svg') no-repeat center center;
+  background: url('background.svg') no-repeat center center;
   background-size: cover;
   padding: 20px;
   box-sizing: border-box;
@@ -197,21 +198,57 @@ const AlertBox = styled.div`
   font-size: 14px;
 `;
 
+// Função para enviar os dados ao Supabase
+const submitDataToSupabase = async (data) => {
+  const { error } = await supabase.from('missions').insert([data]);
+  if (error) {
+    console.error('Erro ao enviar os dados:', error);
+    return false;
+  }
+  return true;
+};
+
 // Componentes refatorados para as seções
-const InternationalSection = ({ handleBooleanChange }) => {
+const InternationalSection = ({ handleBooleanChange, handleChange, formData }) => {
   return (
     <div>
       <Label>País:</Label>
-      <Input type="text" name="countryInternational" placeholder="Digite o país..." required />
+      <Input
+        type="text"
+        name="country"
+        placeholder="Digite o país..."
+        value={formData.country}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Nome do Missionário:</Label>
-      <Input type="text" name="missionaryNameInternational" placeholder="Nome do Missionário" required />
+      <Input
+        type="text"
+        name="missionary_name"
+        placeholder="Nome do Missionário"
+        value={formData.missionary_name}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Valor de Ajuda Mensal (R$):</Label>
-      <Input type="number" name="helpValueInternational" placeholder="Valor de Ajuda Mensal (R$)" required />
+      <Input
+        type="number"
+        name="help_value"
+        placeholder="Valor de Ajuda Mensal (R$)"
+        value={formData.help_value}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Select name="missionaryTimeInternational" required>
+      <Select
+        name="missionary_time"
+        value={formData.missionary_time}
+        onChange={handleChange}
+        required
+      >
         <option value="">Selecione o tempo de ajuda...</option>
         <option value="1 ano">1 ano</option>
         <option value="2 anos">2 anos</option>
@@ -220,7 +257,12 @@ const InternationalSection = ({ handleBooleanChange }) => {
       </Select>
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
-      <Select name="missionarySentByChurch" onChange={handleBooleanChange} required>
+      <Select
+        name="missionary_sent_by_church"
+        value={formData.missionary_sent_by_church}
+        onChange={handleBooleanChange}
+        required
+      >
         <option value="">Selecione...</option>
         <option value="true">Sim</option>
         <option value="false">Não</option>
@@ -229,23 +271,56 @@ const InternationalSection = ({ handleBooleanChange }) => {
   );
 };
 
-const NationalSection = ({ handleBooleanChange }) => {
+const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
   return (
     <div>
       <Label>Estado:</Label>
-      <Input type="text" name="state" placeholder="Digite o estado..." required />
+      <Input
+        type="text"
+        name="state"
+        placeholder="Digite o estado..."
+        value={formData.state}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Município:</Label>
-      <Input type="text" name="municipality" placeholder="Digite o município..." required />
+      <Input
+        type="text"
+        name="municipality"
+        placeholder="Digite o município..."
+        value={formData.municipality}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Nome do Missionário:</Label>
-      <Input type="text" name="missionaryNameNational" placeholder="Nome do Missionário" required />
+      <Input
+        type="text"
+        name="missionary_name"
+        placeholder="Nome do Missionário"
+        value={formData.missionary_name}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Valor de Ajuda Mensal (R$):</Label>
-      <Input type="number" name="helpValueNational" placeholder="Valor de Ajuda Mensal (R$)" required />
+      <Input
+        type="number"
+        name="help_value"
+        placeholder="Valor de Ajuda Mensal (R$)"
+        value={formData.help_value}
+        onChange={handleChange}
+        required
+      />
 
       <Label>Tempo de Ajuda Missionária:</Label>
-      <Select name="missionaryTimeNational" required>
+      <Select
+        name="missionary_time"
+        value={formData.missionary_time}
+        onChange={handleChange}
+        required
+      >
         <option value="">Selecione o tempo de ajuda...</option>
         <option value="1 ano">1 ano</option>
         <option value="2 anos">2 anos</option>
@@ -254,7 +329,12 @@ const NationalSection = ({ handleBooleanChange }) => {
       </Select>
 
       <Label>O missionário foi enviado pela sua Igreja?</Label>
-      <Select name="missionarySentByChurchNational" onChange={handleBooleanChange} required>
+      <Select
+        name="missionary_sent_by_church"
+        value={formData.missionary_sent_by_church}
+        onChange={handleBooleanChange}
+        required
+      >
         <option value="">Selecione...</option>
         <option value="true">Sim</option>
         <option value="false">Não</option>
@@ -262,7 +342,6 @@ const NationalSection = ({ handleBooleanChange }) => {
     </div>
   );
 };
-
 
 // Componente principal
 export default function MissionForm() {
@@ -272,18 +351,23 @@ export default function MissionForm() {
   const [showInternational, setShowInternational] = useState(false);
   const [showNational, setShowNational] = useState(false);
   const [missionarySentByChurch, setMissionarySentByChurch] = useState(null);
+  const [formData, setFormData] = useState({
+    missionary_name: '',
+    help_value: '',
+    missionary_time: '',
+    country: '',
+    state: '',
+    municipality: '',
+  });
   const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInvalidInput = (event) => {
     if (event.target.name === "city") {
       event.target.setCustomValidity("Por favor, digite o nome da cidade.");
     } else if (event.target.name === "pastorName") {
       event.target.setCustomValidity("Por favor, digite o nome do pastor presidente.");
-    } else if (event.target.name === "missionaryNameInternational") {
-      event.target.setCustomValidity("Por favor, digite o nome do missionário.");
-    } else if (event.target.name === "helpValueInternational") {
-      event.target.setCustomValidity("Por favor, digite o valor de ajuda mensal.");
     } else {
       event.target.setCustomValidity("");
     }
@@ -299,35 +383,56 @@ export default function MissionForm() {
     setShowNational(type === 'national' || type === 'both');
   };
 
-  const toggleSection = (section) => {
-    if (section === 'international') {
-      if (showInternational) {
-        setSelectionType('');
-      }
-      setShowInternational(!showInternational);
-    } else if (section === 'national') {
-      if (showNational) {
-        setSelectionType('');
-      }
-      setShowNational(!showNational);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!city || !pastorName || (!showInternational && !showNational)) {
       setShowAlert(true);
+      setIsLoading(false);
       return;
     }
 
-    setShowAlert(false);
-    setShowPopup(true); // Exibir o popup após enviar o formulário
+    const data = {
+      city,
+      pastor_name: pastorName,
+      selection_type: selectionType,
+      missionary_name: formData.missionary_name,
+      help_value: formData.help_value,
+      missionary_time: formData.missionary_time,
+      country: formData.country,
+      state: formData.state,
+      municipality: formData.municipality,
+      missionary_sent_by_church: missionarySentByChurch === true,
+    };
+
+    const success = await submitDataToSupabase(data);
+    setIsLoading(false);
+
+    if (success) {
+      setShowAlert(false);
+      setShowPopup(true); // Exibir o popup após enviar o formulário
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleNewForm = () => {
     setCity('');
     setPastorName('');
+    setFormData({
+      missionary_name: '',
+      help_value: '',
+      missionary_time: '',
+      country: '',
+      state: '',
+      municipality: '',
+    });
     setSelectionType('');
     setShowInternational(false);
     setShowNational(false);
@@ -376,7 +481,6 @@ export default function MissionForm() {
                 value="international"
                 checked={selectionType === 'international'}
                 onChange={() => handleSelectionTypeChange('international')}
-                onInvalid={handleInvalidInput}
                 required
               />{' '}
               Internacional
@@ -388,7 +492,6 @@ export default function MissionForm() {
                 value="national"
                 checked={selectionType === 'national'}
                 onChange={() => handleSelectionTypeChange('national')}
-                onInvalid={handleInvalidInput}
                 required
               />{' '}
               Nacional
@@ -400,7 +503,6 @@ export default function MissionForm() {
                 value="both"
                 checked={selectionType === 'both'}
                 onChange={() => handleSelectionTypeChange('both')}
-                onInvalid={handleInvalidInput}
                 required
               />{' '}
               Ambos
@@ -415,7 +517,11 @@ export default function MissionForm() {
                 </SectionTitle>
               )}
               {showInternational && (
-                <InternationalSection handleBooleanChange={handleBooleanChange} />
+                <InternationalSection
+                  handleBooleanChange={handleBooleanChange}
+                  handleChange={handleChange}
+                  formData={formData}
+                />
               )}
 
               {showNational && (
@@ -424,12 +530,18 @@ export default function MissionForm() {
                 </SectionTitle>
               )}
               {showNational && (
-                <NationalSection handleBooleanChange={handleBooleanChange} />
+                <NationalSection
+                  handleBooleanChange={handleBooleanChange}
+                  handleChange={handleChange}
+                  formData={formData}
+                />
               )}
             </>
           )}
 
-          <Button type="submit">Enviar</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Enviando...' : 'Enviar'}
+          </Button>
         </form>
       </FormWrapper>
 

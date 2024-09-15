@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,10 +11,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </head>
+    <html lang="pt-br">
+      <Head>
+        {/* Configurando o favicon usando logo.png */}
+        <link rel="icon" href="/logo.png" />
+        <title>SEMADERGS</title>
+        <meta name="description" content="Censo da Assembleia de Deus no Rio Grande do Sul" />
+      </Head>
       <body>{children}</body>
     </html>
   );
