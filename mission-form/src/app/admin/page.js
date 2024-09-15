@@ -148,6 +148,80 @@ const downloadCSV = (missions) => {
   document.body.removeChild(link);
 };
 
+const generateDOCX = async (mission) => {
+  try {
+    console.log("Tentando baixar e preencher o modelo .docx");
+
+    // Carregar o arquivo de modelo .docx
+    const response = await fetch("/FICHA_USUARIO.docx");
+
+    if (!response.ok) {
+      throw new Error("Não foi possível carregar o modelo .docx");
+    }
+
+    const templateData = await response.arrayBuffer();
+    const zip = new PizZip(templateData);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    console.log("Arquivo modelo carregado com sucesso");
+
+    // Preencher os campos no documento com base nos dados da missão
+    doc.setData({
+      nome_do_campo: mission.city || "N/A",
+      pastor_nome: mission.pastor_name || "N/A",
+      rams: mission.receives_help ? "X" : " ",
+      ramn: !mission.receives_help ? "X" : " ",
+      pais_internacional: mission.country || "N/A",
+      missionario_internacional: mission.missionary_name || "N/A",
+      valor_ajuda_internacional: mission.help_value
+        ? `R$ ${mission.help_value.toFixed(2)}`
+        : "N/A",
+      tai1: mission.missionary_time === "1 ano" ? "X" : " ",
+      tai2: mission.missionary_time === "2 anos" ? "X" : " ",
+      tai3: mission.missionary_time === "3 anos" ? "X" : " ",
+      taii: mission.missionary_time === "indeterminado" ? "X" : " ",
+      mies: mission.missionary_sent_by_church ? "X" : " ",
+      mien: !mission.missionary_sent_by_church ? "X" : " ",
+      cidade_nacional: mission.city || "N/A",
+      uf_nacional: mission.state || "N/A",
+      missionario_nacional: mission.missionary_name || "N/A",
+      valor_ajuda_nacional: mission.help_value
+        ? `R$ ${mission.help_value.toFixed(2)}`
+        : "N/A",
+      tan1: mission.missionary_time === "1 ano" ? "X" : " ",
+      tan2: mission.missionary_time === "2 anos" ? "X" : " ",
+      tan3: mission.missionary_time === "3 anos" ? "X" : " ",
+      tani: mission.missionary_time === "indeterminado" ? "X" : " ",
+      mnes: mission.missionary_sent_by_church ? "X" : " ",
+      mnen: !mission.missionary_sent_by_church ? "X" : " ",
+    });
+
+    // Renderizar o documento com os dados preenchidos
+    doc.render();
+    console.log("Campos preenchidos com sucesso");
+
+    // Gerar e baixar o arquivo .docx preenchido
+    const out = doc.getZip().generate({
+      type: "blob",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+
+    saveAs(out, `Ficha_${mission.city}.docx`);
+
+    console.log("Arquivo baixado com sucesso");
+  } catch (error) {
+    console.error("Erro ao gerar o documento DOCX:", error);
+
+    if (error.properties && error.properties.errors) {
+      console.error("Detalhes do erro:", error.properties.errors);
+    }
+  }
+};
+
 export default function AdminPage() {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
