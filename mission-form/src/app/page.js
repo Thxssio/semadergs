@@ -39,6 +39,8 @@ const SectionTitle = styled.h2`
   margin: 20px 0 12px;
   font-weight: 500;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Label = styled.label`
@@ -198,7 +200,6 @@ const AlertBox = styled.div`
   font-size: 14px;
 `;
 
-// Função para enviar os dados ao Supabase
 const submitDataToSupabase = async (data) => {
   const { error } = await supabase.from('missions').insert([data]);
   if (error) {
@@ -209,7 +210,7 @@ const submitDataToSupabase = async (data) => {
 };
 
 // Componentes refatorados para as seções
-const InternationalSection = ({ handleBooleanChange, handleChange, formData }) => {
+const InternationalSection = ({ handleInternationalChange, formDataInternational }) => {
   return (
     <div>
       <Label>País:</Label>
@@ -217,8 +218,8 @@ const InternationalSection = ({ handleBooleanChange, handleChange, formData }) =
         type="text"
         name="country"
         placeholder="Digite o país..."
-        value={formData.country}
-        onChange={handleChange}
+        value={formDataInternational.country}
+        onChange={handleInternationalChange}
         required
       />
 
@@ -227,8 +228,8 @@ const InternationalSection = ({ handleBooleanChange, handleChange, formData }) =
         type="text"
         name="missionary_name"
         placeholder="Nome do Missionário"
-        value={formData.missionary_name}
-        onChange={handleChange}
+        value={formDataInternational.missionary_name}
+        onChange={handleInternationalChange}
         required
       />
 
@@ -237,16 +238,16 @@ const InternationalSection = ({ handleBooleanChange, handleChange, formData }) =
         type="number"
         name="help_value"
         placeholder="Valor de Ajuda Mensal (R$)"
-        value={formData.help_value}
-        onChange={handleChange}
+        value={formDataInternational.help_value}
+        onChange={handleInternationalChange}
         required
       />
 
       <Label>Tempo de Ajuda Missionária:</Label>
       <Select
         name="missionary_time"
-        value={formData.missionary_time}
-        onChange={handleChange}
+        value={formDataInternational.missionary_time}
+        onChange={handleInternationalChange}
         required
       >
         <option value="">Selecione o tempo de ajuda...</option>
@@ -259,8 +260,8 @@ const InternationalSection = ({ handleBooleanChange, handleChange, formData }) =
       <Label>O missionário foi enviado pela sua Igreja?</Label>
       <Select
         name="missionary_sent_by_church"
-        value={formData.missionary_sent_by_church}
-        onChange={handleBooleanChange}
+        value={formDataInternational.missionary_sent_by_church}
+        onChange={handleInternationalChange}
         required
       >
         <option value="">Selecione...</option>
@@ -271,7 +272,7 @@ const InternationalSection = ({ handleBooleanChange, handleChange, formData }) =
   );
 };
 
-const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
+const NationalSection = ({ handleNationalChange, formDataNational }) => {
   return (
     <div>
       <Label>Estado:</Label>
@@ -279,8 +280,8 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
         type="text"
         name="state"
         placeholder="Digite o estado..."
-        value={formData.state}
-        onChange={handleChange}
+        value={formDataNational.state}
+        onChange={handleNationalChange}
         required
       />
 
@@ -289,8 +290,8 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
         type="text"
         name="municipality"
         placeholder="Digite o município..."
-        value={formData.municipality}
-        onChange={handleChange}
+        value={formDataNational.municipality}
+        onChange={handleNationalChange}
         required
       />
 
@@ -299,8 +300,8 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
         type="text"
         name="missionary_name"
         placeholder="Nome do Missionário"
-        value={formData.missionary_name}
-        onChange={handleChange}
+        value={formDataNational.missionary_name}
+        onChange={handleNationalChange}
         required
       />
 
@@ -309,16 +310,16 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
         type="number"
         name="help_value"
         placeholder="Valor de Ajuda Mensal (R$)"
-        value={formData.help_value}
-        onChange={handleChange}
+        value={formDataNational.help_value}
+        onChange={handleNationalChange}
         required
       />
 
       <Label>Tempo de Ajuda Missionária:</Label>
       <Select
         name="missionary_time"
-        value={formData.missionary_time}
-        onChange={handleChange}
+        value={formDataNational.missionary_time}
+        onChange={handleNationalChange}
         required
       >
         <option value="">Selecione o tempo de ajuda...</option>
@@ -331,8 +332,8 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
       <Label>O missionário foi enviado pela sua Igreja?</Label>
       <Select
         name="missionary_sent_by_church"
-        value={formData.missionary_sent_by_church}
-        onChange={handleBooleanChange}
+        value={formDataNational.missionary_sent_by_church}
+        onChange={handleNationalChange}
         required
       >
         <option value="">Selecione...</option>
@@ -344,7 +345,84 @@ const NationalSection = ({ handleBooleanChange, handleChange, formData }) => {
 };
 
 
-// Componente principal
+const ToggleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+const Switch = styled.label`
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+`;
+
+const Slider = styled.span`
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: ${(props) => (props.checked ? '#007bff' : '#ccc')};
+  transition: 0.4s;
+  border-radius: 34px;
+  
+  &:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    transform: ${(props) => (props.checked ? 'translateX(26px)' : 'none')};
+  }
+`;
+
+const SwitchInput = styled.input`
+  display: none;
+`;
+
+const HelpOriginWrapper = styled.div`
+  margin-top: 10px;
+  display: ${(props) => (props.visible ? 'block' : 'none')};
+`;
+
+const HelpMissionaryField = ({ receivesHelp, setReceivesHelp, helpOrigin, setHelpOrigin }) => {
+  return (
+    <>
+      <ToggleWrapper>
+        <Label>O campo recebe ajuda missionária?</Label>
+        <Switch>
+          <SwitchInput 
+            type="checkbox" 
+            checked={receivesHelp || false}  // Garantir valor booleano
+            onChange={() => setReceivesHelp(!receivesHelp)} 
+          />
+          <Slider checked={receivesHelp}></Slider>
+        </Switch>
+      </ToggleWrapper>
+
+      <HelpOriginWrapper visible={receivesHelp}>
+        <Label>Origem da ajuda missionária:</Label>
+        <Input
+          type="text"
+          name="helpOrigin"
+          placeholder="Digite a origem da ajuda..."
+          value={helpOrigin}
+          onChange={(e) => setHelpOrigin(e.target.value)}
+        />
+      </HelpOriginWrapper>
+    </>
+  );
+};
+
+
 export default function MissionForm() {
   const [city, setCity] = useState('');
   const [pastorName, setPastorName] = useState('');
@@ -352,19 +430,27 @@ export default function MissionForm() {
   const [showInternational, setShowInternational] = useState(false);
   const [showNational, setShowNational] = useState(false);
   const [missionarySentByChurch, setMissionarySentByChurch] = useState(null);
-  const [formData, setFormData] = useState({
+  const [receivesHelp, setReceivesHelp] = useState(false);
+  const [helpOrigin, setHelpOrigin] = useState('');
+
+  const [formDataInternational, setFormDataInternational] = useState({
     missionary_name: '',
     help_value: '',
     missionary_time: '',
     country: '',
+    missionary_sent_by_church: '',
+  });
+  const [formDataNational, setFormDataNational] = useState({
+    missionary_name: '',
+    help_value: '',
+    missionary_time: '',
     state: '',
     municipality: '',
+    missionary_sent_by_church: '',
   });
   const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  
 
   const handleInvalidInput = (event) => {
     if (event.target.name === "city") {
@@ -376,33 +462,20 @@ export default function MissionForm() {
     }
   };
 
-  const handleBooleanChange = (e) => {
-    setMissionarySentByChurch(e.target.value === "true");
+  const handleInternationalChange = (e) => {
+    const { name, value } = e.target;
+    setFormDataInternational((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleNationalChange = (e) => {
+    const { name, value } = e.target;
+    setFormDataNational((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSelectionTypeChange = (type) => {
     setSelectionType(type);
     setShowInternational(type === 'international' || type === 'both');
     setShowNational(type === 'national' || type === 'both');
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const toggleSection = (section) => {
-    if (section === 'international') {
-      if (showInternational) {
-        setSelectionType('');
-      }
-      setShowInternational(!showInternational);
-    } else if (section === 'national') {
-      if (showNational) {
-        setSelectionType('');
-      }
-      setShowNational(!showNational);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -415,45 +488,87 @@ export default function MissionForm() {
       return;
     }
 
-    const data = {
+    // Dados internacionais
+    const internationalData = {
       city,
       pastor_name: pastorName,
-      selection_type: selectionType,
-      missionary_name: formData.missionary_name,
-      help_value: formData.help_value,
-      missionary_time: formData.missionary_time,
-      country: formData.country,
-      state: formData.state,
-      municipality: formData.municipality,
-      missionary_sent_by_church: missionarySentByChurch === true,
+      receives_help: receivesHelp, 
+      help_origin: receivesHelp ? helpOrigin : null,
+      selection_type: 'international',
+      missionary_name: formDataInternational.missionary_name,
+      help_value: formDataInternational.help_value,
+      missionary_time: formDataInternational.missionary_time,
+      country: formDataInternational.country,
+      missionary_sent_by_church: formDataInternational.missionary_sent_by_church === "true",
     };
 
-    const success = await submitDataToSupabase(data);
-    setIsLoading(false);
+    // Dados nacionais
+    const nationalData = {
+      city,
+      pastor_name: pastorName,
+      receives_help: receivesHelp, 
+      help_origin: receivesHelp ? helpOrigin : null,
+      selection_type: 'national',
+      missionary_name: formDataNational.missionary_name,
+      help_value: formDataNational.help_value,
+      missionary_time: formDataNational.missionary_time,
+      state: formDataNational.state,
+      municipality: formDataNational.municipality,
+      missionary_sent_by_church: formDataNational.missionary_sent_by_church === "true",
+    };
 
-    if (success) {
-      setShowAlert(false);
-      setShowPopup(true); // Exibir o popup após enviar o formulário
-    } else {
-      setShowAlert(true);
+    if (selectionType === 'both') {
+      const successInternational = await submitDataToSupabase(internationalData);
+      const successNational = await submitDataToSupabase(nationalData);
+      if (successInternational && successNational) {
+        setShowAlert(false);
+        setShowPopup(true);
+      } else {
+        setShowAlert(true);
+      }
+    } else if (selectionType === 'international') {
+      const success = await submitDataToSupabase(internationalData);
+      if (success) {
+        setShowAlert(false);
+        setShowPopup(true); 
+      } else {
+        setShowAlert(true);
+      }
+    } else if (selectionType === 'national') {
+      const success = await submitDataToSupabase(nationalData);
+      if (success) {
+        setShowAlert(false);
+        setShowPopup(true); 
+      } else {
+        setShowAlert(true);
+      }
     }
+
+    setIsLoading(false);
   };
 
   const handleNewForm = () => {
     setCity('');
     setPastorName('');
-    setFormData({
+    setFormDataInternational({
       missionary_name: '',
       help_value: '',
       missionary_time: '',
       country: '',
+      missionary_sent_by_church: '',
+    });
+    setFormDataNational({
+      missionary_name: '',
+      help_value: '',
+      missionary_time: '',
       state: '',
       municipality: '',
+      missionary_sent_by_church: '',
     });
     setSelectionType('');
     setShowInternational(false);
     setShowNational(false);
-    setShowPopup(false); // Fechar o popup e resetar o formulário
+    setShowPopup(false); 
   };
 
   return (
@@ -490,69 +605,78 @@ export default function MissionForm() {
             required
           />
 
-          <RadioGroup>
-            <RadioLabel>
-              <input
-                type="radio"
-                name="selectionType"
-                value="international"
-                checked={selectionType === 'international'}
-                onChange={() => handleSelectionTypeChange('international')}
-                required
-              />{' '}
-              Internacional
-            </RadioLabel>
-            <RadioLabel>
-              <input
-                type="radio"
-                name="selectionType"
-                value="national"
-                checked={selectionType === 'national'}
-                onChange={() => handleSelectionTypeChange('national')}
-                required
-              />{' '}
-              Nacional
-            </RadioLabel>
-            <RadioLabel>
-              <input
-                type="radio"
-                name="selectionType"
-                value="both"
-                checked={selectionType === 'both'}
-                onChange={() => handleSelectionTypeChange('both')}
-                required
-              />{' '}
-              Ambos
-            </RadioLabel>
-          </RadioGroup>
+          <HelpMissionaryField
+            receivesHelp={receivesHelp}
+            setReceivesHelp={setReceivesHelp}
+            helpOrigin={helpOrigin}
+            setHelpOrigin={setHelpOrigin}
+          />
 
-          {selectionType && (
+          {city && pastorName && (
             <>
-              {showInternational && (
-                <SectionTitle onClick={() => toggleSection('international')}>
-                  Detalhamento de Ajuda Missionária Internacional {showInternational ? '-' : '+'}
-                </SectionTitle>
-              )}
-              {showInternational && (
-                <InternationalSection
-                  handleBooleanChange={handleBooleanChange}
-                  handleChange={handleChange}
-                  formData={formData}
-                />
-              )}
+              <RadioGroup>
+                <RadioLabel>
+                  <input
+                    type="radio"
+                    name="selectionType"
+                    value="international"
+                    checked={selectionType === 'international'}
+                    onChange={() => handleSelectionTypeChange('international')}
+                    required
+                  />{' '}
+                  Internacional
+                </RadioLabel>
+                <RadioLabel>
+                  <input
+                    type="radio"
+                    name="selectionType"
+                    value="national"
+                    checked={selectionType === 'national'}
+                    onChange={() => handleSelectionTypeChange('national')}
+                    required
+                  />{' '}
+                  Nacional
+                </RadioLabel>
+                <RadioLabel>
+                  <input
+                    type="radio"
+                    name="selectionType"
+                    value="both"
+                    checked={selectionType === 'both'}
+                    onChange={() => handleSelectionTypeChange('both')}
+                    required
+                  />{' '}
+                  Ambos
+                </RadioLabel>
+              </RadioGroup>
 
-              {showNational && (
-                <SectionTitle onClick={() => toggleSection('national')}>
-                  Detalhamento de Ajuda Missionária Nacional {showNational ? '-' : '+'}
-                </SectionTitle>
-              )}
-              {showNational && (
-                <NationalSection
-                  handleBooleanChange={handleBooleanChange}
-                  handleChange={handleChange}
-                  formData={formData}
-                />
-              )}
+              {selectionType === 'international' || selectionType === 'both' ? (
+                <>
+                  <SectionTitle onClick={() => setShowInternational(!showInternational)}>
+                    Detalhamento de Ajuda Missionária Internacional {showInternational ? '-' : '+'}
+                  </SectionTitle>
+                  {showInternational && (
+                    <InternationalSection
+                      handleInternationalChange={handleInternationalChange}
+                      formDataInternational={formDataInternational}
+                    />
+                  )}
+                </>
+              ) : null}
+
+              {selectionType === 'national' || selectionType === 'both' ? (
+                <>
+                  <SectionTitle onClick={() => setShowNational(!showNational)}>
+                    Detalhamento de Ajuda Missionária Nacional {showNational ? '-' : '+'}
+                  </SectionTitle>
+                  {showNational && (
+                    <NationalSection
+                      handleNationalChange={handleNationalChange}
+                      formDataNational={formDataNational}
+                    />
+                  )}
+                </>
+              ) : null}
             </>
           )}
 

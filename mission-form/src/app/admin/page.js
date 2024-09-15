@@ -134,6 +134,8 @@ export default function AdminPage() {
         "help_value",
         "missionary_time",
         "missionary_sent_by_church",
+        "receives_help",    // Novo campo
+        "help_origin",      // Novo campo
       ],
     });
 
@@ -175,6 +177,8 @@ export default function AdminPage() {
             <Th>Valor de Ajuda Mensal (R$)</Th>
             <Th>Tempo de Ajuda</Th>
             <Th>Enviado pela Igreja?</Th>
+            <Th>Recebe Ajuda?</Th>  {/* Nova coluna */}
+            <Th>Origem da Ajuda</Th>  {/* Nova coluna */}
           </Tr>
         </Thead>
         <Tbody>
@@ -186,9 +190,15 @@ export default function AdminPage() {
               <Td>{mission.selection_type}</Td>
               <Td>{mission.country || mission.state}</Td>
               <Td>{mission.missionary_name}</Td>
-              <Td>{mission.help_value}</Td>
+              <Td>
+                {mission.help_value 
+                  ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mission.help_value) 
+                  : "N/A"}
+              </Td>  {/* Formatação do valor de ajuda mensal */}
               <Td>{mission.missionary_time}</Td>
               <Td>{mission.missionary_sent_by_church ? "Sim" : "Não"}</Td>
+              <Td>{mission.receives_help ? "Sim" : "Não"}</Td> {/* Nova coluna */}
+              <Td>{mission.help_origin || "N/A"}</Td> {/* Nova coluna */}
             </Tr>
           ))}
         </Tbody>
