@@ -494,7 +494,7 @@ export default function MissionForm() {
       pastor_name: pastorName,
       receives_help: receivesHelp, 
       help_origin: receivesHelp ? helpOrigin : null,
-      selection_type: 'Inetrnaciional',
+      selection_type: 'Internacional',
       missionary_name: formDataInternational.missionary_name,
       help_value: formDataInternational.help_value,
       missionary_time: formDataInternational.missionary_time,
